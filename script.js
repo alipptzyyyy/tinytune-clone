@@ -1,4 +1,3 @@
-<script>
 async function startUpload() {
   const fileInput = document.getElementById("file");
   const file = fileInput.files[0];
@@ -19,4 +18,3 @@ async function startUpload() {
   const result = await response.json();
   alert(result.message);
 }
-</script>
