@@ -5,5 +5,9 @@ export const config = {
 };
 
 export default async function handler(req, res) {
-  res.status(200).json({ message: "File received successfully 🚀" });
+  const dummyContent = "File berhasil diproses 🚀";
+
+  res.setHeader("Content-Disposition", "attachment; filename=hasil.txt");
+  res.setHeader("Content-Type", "text/plain");
+  res.status(200).send(dummyContent);
 }
