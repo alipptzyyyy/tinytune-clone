@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TinyTune Clone</title>
+
 <style>
 body {
   margin: 0;
@@ -23,10 +24,11 @@ body {
   border-radius: 20px;
   backdrop-filter: blur(10px);
   box-shadow: 0 0 40px rgba(140, 82, 255, 0.4);
+  width: 300px;
 }
 
 h1 {
-  font-size: 40px;
+  font-size: 30px;
   background: linear-gradient(90deg, #a855f7, #6366f1);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -43,24 +45,77 @@ button {
   padding: 10px 20px;
   border-radius: 10px;
   border: none;
-  margin-left: 10px;
+  margin-top: 15px;
   background: #7c3aed;
   color: white;
   cursor: pointer;
+  width: 100%;
 }
 
 button:hover {
   background: #9333ea;
 }
+
+/* Progress Bar */
+.progress-container {
+  margin-top: 20px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  display: none;
+}
+
+.progress-bar {
+  height: 10px;
+  width: 0%;
+  background: linear-gradient(90deg, #a855f7, #6366f1);
+  transition: width 0.2s;
+}
+
+.percent {
+  margin-top: 10px;
+  display: none;
+}
 </style>
 </head>
+
 <body>
 
 <div class="container">
   <h1>Shrink Your Project 🚀</h1>
-  <input type="file">
-  <button>Upload</button>
+  <input type="file" id="file">
+  <button onclick="startUpload()">Upload</button>
+
+  <div class="progress-container" id="progressContainer">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <div class="percent" id="percentText">0%</div>
 </div>
+
+<script>
+function startUpload() {
+  const progressBar = document.getElementById("progressBar");
+  const progressContainer = document.getElementById("progressContainer");
+  const percentText = document.getElementById("percentText");
+
+  progressContainer.style.display = "block";
+  percentText.style.display = "block";
+
+  let progress = 0;
+
+  const interval = setInterval(() => {
+    if (progress >= 100) {
+      clearInterval(interval);
+      percentText.innerHTML = "Upload Complete ✅";
+    } else {
+      progress++;
+      progressBar.style.width = progress + "%";
+      percentText.innerHTML = progress + "%";
+    }
+  }, 30);
+}
+</script>
 
 </body>
 </html>
