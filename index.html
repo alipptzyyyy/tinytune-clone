@@ -52,11 +52,6 @@ button {
   width: 100%;
 }
 
-button:hover {
-  background: #9333ea;
-}
-
-/* Progress Bar */
 .progress-container {
   margin-top: 20px;
   background: rgba(255,255,255,0.1);
@@ -94,7 +89,15 @@ button:hover {
 </div>
 
 <script>
-function startUpload() {
+async function startUpload() {
+  const fileInput = document.getElementById("file");
+  const file = fileInput.files[0];
+
+  if (!file) {
+    alert("Pilih file dulu!");
+    return;
+  }
+
   const progressBar = document.getElementById("progressBar");
   const progressContainer = document.getElementById("progressContainer");
   const percentText = document.getElementById("percentText");
@@ -104,16 +107,38 @@ function startUpload() {
 
   let progress = 0;
 
-  const interval = setInterval(() => {
-    if (progress >= 100) {
-      clearInterval(interval);
-      percentText.innerHTML = "Upload Complete ✅";
-    } else {
+  const fakeLoading = setInterval(() => {
+    if (progress < 90) {
       progress++;
       progressBar.style.width = progress + "%";
       percentText.innerHTML = progress + "%";
     }
-  }, 30);
+  }, 20);
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await fetch("/api/upload", {
+    method: "POST",
+    body: formData,
+  });
+
+  clearInterval(fakeLoading);
+
+  progressBar.style.width = "100%";
+  percentText.innerHTML = "100%";
+
+  const blob = await response.blob();
+  const url = window.URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "hasil.txt";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+
+  percentText.innerHTML = "Upload Complete ✅";
 }
 </script>
 
