@@ -1,146 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TinyTune Clone</title>
-
-<style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #0f0f0f, #1a1a2e);
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-
-.container {
-  text-align: center;
-  background: rgba(255,255,255,0.05);
-  padding: 40px;
-  border-radius: 20px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 0 40px rgba(140, 82, 255, 0.4);
-  width: 300px;
-}
-
-h1 {
-  font-size: 30px;
-  background: linear-gradient(90deg, #a855f7, #6366f1);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-input {
-  margin-top: 20px;
-  padding: 10px;
-  border-radius: 10px;
-  border: none;
-}
-
-button {
-  padding: 10px 20px;
-  border-radius: 10px;
-  border: none;
-  margin-top: 15px;
-  background: #7c3aed;
-  color: white;
-  cursor: pointer;
-  width: 100%;
-}
-
-.progress-container {
-  margin-top: 20px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 10px;
-  overflow: hidden;
-  display: none;
-}
-
-.progress-bar {
-  height: 10px;
-  width: 0%;
-  background: linear-gradient(90deg, #a855f7, #6366f1);
-  transition: width 0.2s;
-}
-
-.percent {
-  margin-top: 10px;
-  display: none;
-}
-</style>
+  <title>TinyTune Lite</title>
 </head>
+<body style="background:#111;color:white;text-align:center;padding-top:100px;font-family:sans-serif;">
 
-<body>
+  <h1>TinyTune Lite 🚀</h1>
+  <p>Upload ZIP Flutter (max kecil ya 😅)</p>
 
-<div class="container">
-  <h1>Shrink Your Project 🚀</h1>
   <input type="file" id="file">
-  <button onclick="startUpload()">Upload</button>
+  <br><br>
+  <button onclick="upload()">Upload</button>
 
-  <div class="progress-container" id="progressContainer">
-    <div class="progress-bar" id="progressBar"></div>
-  </div>
+  <script>
+    async function upload() {
+      const file = document.getElementById("file").files[0];
+      const formData = new FormData();
+      formData.append("file", file);
 
-  <div class="percent" id="percentText">0%</div>
-</div>
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData
+      });
 
-<script>
-async function startUpload() {
-  const fileInput = document.getElementById("file");
-  const file = fileInput.files[0];
+      if (!res.ok) {
+        alert("Upload gagal");
+        return;
+      }
 
-  if (!file) {
-    alert("Pilih file dulu!");
-    return;
-  }
-
-  const progressBar = document.getElementById("progressBar");
-  const progressContainer = document.getElementById("progressContainer");
-  const percentText = document.getElementById("percentText");
-
-  progressContainer.style.display = "block";
-  percentText.style.display = "block";
-
-  let progress = 0;
-
-  const fakeLoading = setInterval(() => {
-    if (progress < 90) {
-      progress++;
-      progressBar.style.width = progress + "%";
-      percentText.innerHTML = progress + "%";
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "cleaned_project.zip";
+      a.click();
     }
-  }, 20);
-
-  const formData = new FormData();
-  formData.append("file", file);
-
-  const response = await fetch("/api/upload", {
-    method: "POST",
-    body: formData,
-  });
-
-  clearInterval(fakeLoading);
-
-  progressBar.style.width = "100%";
-  percentText.innerHTML = "100%";
-
-  const blob = await response.blob();
-  const url = window.URL.createObjectURL(blob);
-
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "hasil.txt";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-
-  percentText.innerHTML = "Upload Complete ✅";
-}
-</script>
+  </script>
 
 </body>
 </html>
