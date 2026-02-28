@@ -15,6 +15,13 @@ async function startUpload() {
     body: formData,
   });
 
-  const result = await response.json();
-  alert(result.message);
+  const blob = await response.blob();
+  const url = window.URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "hasil.txt";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
 }
